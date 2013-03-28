@@ -23,6 +23,18 @@ class UsersController extends AppController {
     }
 
 /**
+ * login method
+ *
+ * @return void
+ */
+ 
+    public function login() {
+        if($this->request->is('post') && $this->Auth->login()) {
+        	$this->redirect('/tools/');
+        }
+    }
+
+/**
  * logout method
  *
  * @return void
