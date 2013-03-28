@@ -1,6 +1,56 @@
+<?php echo $this->Html->css('http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css', null, array('inline' => false)); ?>
+<?php echo $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js', array('inline' => false)); ?>
+<?php echo $this->Html->script('http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js', array('inline' => false)); ?>
+<?php echo $this->Html->scriptStart(array('inline' => false)); ?>
+$(function() {
+	var $inputCalcHotelId = $('#CalcHotelId');
+	var $inputCalcHotelName = $('#CalcHotelName');
+    $inputCalcHotelName.autocomplete({
+    	minLength: 1,
+        source: function( request, response ) {
+            $.ajax({
+                url: "<?php echo $this->Html->url('/hotels/autocomplete.json'); ?>",
+                dataType: "json",
+                data: {
+                    term: request.term
+                },
+                success: function(data) {
+                	response($.map(data, function(element) {
+                        return {
+                        	label: element.Hotel.name, 
+                        	value: element.Hotel.id
+                        }
+                    }));
+                }
+            });
+        },
+        search: function(event, ui){
+	        if (event.keyCode == 229) return false;
+	        return true;
+	    },
+	    focus: function(event, ui) {
+	    	$inputCalcHotelName.val(ui.item.label);
+	    	$inputCalcHotelId.val(ui.item.value);
+	    	return false;
+	    },
+        select: function(event, ui) {
+        	$inputCalcHotelName.val(ui.item.label);
+	    	$inputCalcHotelId.val(ui.item.value);
+        	return false;
+        }
+    }).keyup(function(event) {
+	    if (event.keyCode == 13) {
+	        $(this).autocomplete("search");
+	    }
+	});
+});
+<?php echo $this->Html->scriptEnd(); ?>
+
 <?php echo $this->Form->create('Calc', array('class' => 'form-horizontal')); ?>
 	<fieldset>
-		<?php echo $this->Form->input('Calc.hotel_id', array('label' => 'ホテル', 'options' => $hotels, 'value' => $hotel_id)); ?>
+		<?php // echo $this->Form->input('Calc.hotel_id', array('label' => 'ホテル', 'options' => $hotels, 'value' => $hotel_id)); ?>
+		<?php echo $this->Form->input('Calc.hotel_name', array('label' => 'ホテル')); ?>
+		<?php echo $this->Form->input('Calc.hotel_id', array('label' => 'ホテル', 'type' => 'hidden')); ?>
 		<?php echo $this->Form->input('Calc.kyaku', array('label' => 'お客様人数')); ?>
 		<?php echo $this->Form->input('Calc.compa', array('label' => 'コンパニオン人数')); ?>
 		<?php echo $this->Form->submit('計算'); ?>
