@@ -128,7 +128,9 @@ class ToolsController extends AppController {
 			}
 
 			$gcd = gmp_strval(gmp_gcd($kyaku, $compa));
-			if($gcd == 1) {
+			if($gcd == 0) {
+				$patterns = array();
+			} elseif($gcd == 1) {
 				$patterns = $this->get_patterns($kyaku, $compa);
 			} else {
 				$patterns = $this->get_patterns($kyaku / $gcd, $compa / $gcd);
